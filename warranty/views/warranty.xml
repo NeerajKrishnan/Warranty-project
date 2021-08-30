@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="form_view_order" model="ir.ui.view">
+        <field name="name">order.warranty.request.view.form</field>
+        <field name="model">warranty.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_draft" string="Conform"
+                            class="btn-primary" states='new'   type="object" />
+                    <button name="action_to_approve" states='invoice' string="To approve"
+
+                            class="btn-primary" type="object"/>
+
+                    <field name="state" widget="statusbar"/>
+                    <button name="action_invoice" string="Invoice"
+                            states="draft"
+                            class="btn-primary" type="object"/>
+
+
+
+                    <button name="action_approved" string="Approved"
+                            states="to approve"
+                            class="btn-primary" type="object"/>
+                    <button name="action_cancel" string="Cancel" type="object"/>
+                </header>
+                <sheet>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="sequence_number" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="customer_id" ></field>
+                            <field name="company_id"></field>
+                            <field name="address_country_id"></field>
+                            <field name="address_state_id"></field>
+                            <field name="address_zip"></field>
+                        </group>
+                        <group >
+                            <field name="date_request"  states="draft,invoice,to approve,approved,cancel">
+                            </field>
+                            <field name="date_invoice" states="invoice,to approve,approved,cancel"></field>
+                            <field name="date_expiration" states="invoice,to approve,approved,cancel"></field>
+                        </group>
+
+                    </group>
+
+                    <group>
+                        <group states="invoice,to approve,approved,cancel">
+                                <field name="warranty_type_form"></field>
+                                <field name="warranty_period_form"></field>
+
+                        </group>
+                    </group>
+
+
+
+
+                    <group states="invoice,to approve,approved,cancel">
+<group >
+    <field name="product_name_id" ></field>
+    <field name="product_serial_id"></field>
+</group>
+ </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="tree_view_order" model="ir.ui.view">
+        <field name="name">order.warranty.request.view.form</field>
+        <field name="model">warranty.request</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence_number"></field>
+                <field name="customer_id"></field>
+                <field name="product_name_id"></field>
+                <field name="product_serial_id"></field>
+                <field name="date_request"></field>
+                <field name ="date_invoice"></field>
+                <field name="state"></field>
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_warranty_search" model="ir.ui.view">
+            <field name="name">warranty.request.search</field>
+            <field name="model">warranty.request</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field  name="customer_id"></field>
+                    <filter string="Date Request" name="date_request"
+                            date="create_date"/>
+                    <filter string="Date Invoice" name="date_invoice"
+                            date="create_date"/>
+
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="state"
+                                context="{'group_by': 'state'}"/>
+                        <filter string="Customer" name="customer_id"
+                                context="{'group_by': 'customer_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <record id="action_warranty_home" model="ir.actions.act_window">
+        <field name="name">Warranty</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">warranty.request</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your First Warranty order
+            </p>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+    <record id="action_warranty_order" model="ir.actions.act_window">
+        <field name="name">Order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">warranty.request</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your First Warranty order
+            </p>
+        </field>
+    </record>
+
+
+
+
+
+
+    <menuitem id="view_warranty_root"
+              name="Warranty"
+              action="action_warranty_home"
+              sequence="2"></menuitem>
+    <menuitem id="view_warranty_order"
+              name="Order"
+              action="action_warranty_order"
+              parent="view_warranty_root"
+              sequence="2"></menuitem>
+    <menuitem id="view_warranty_orders"
+              name="Order"
+              action="action_warranty_order"
+              parent="view_warranty_order"
+              sequence="2"></menuitem>
+
+
+</odoo>
