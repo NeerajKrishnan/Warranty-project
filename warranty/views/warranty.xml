@@ -10,8 +10,9 @@
                 <header>
                     <button name="action_draft" string="Conform"
                             class="btn-primary" states='new'   type="object" />
-                    <button name="action_to_approve" states='invoice' string="To approve"
-
+                    <button name="action_to_approve" states='invoice'
+                            string="To approve"
+                            groups="warranty.group_warranty_manager"
                             class="btn-primary" type="object"/>
 
                     <field name="state" widget="statusbar"/>
@@ -149,7 +150,7 @@
 
 
     <record id="action_warranty_order" model="ir.actions.act_window">
-        <field name="name">Order</field>
+        <field name="name">Request for Warranty</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">warranty.request</field>
         <field name="context">{}</field>
@@ -170,12 +171,12 @@
               action="action_warranty_home"
               sequence="2"></menuitem>
     <menuitem id="view_warranty_order"
-              name="Order"
+              name="Request for Warranty"
               action="action_warranty_order"
               parent="view_warranty_root"
               sequence="2"></menuitem>
     <menuitem id="view_warranty_orders"
-              name="Order"
+              name="Request for Warranty"
               action="action_warranty_order"
               parent="view_warranty_order"
               sequence="2"></menuitem>

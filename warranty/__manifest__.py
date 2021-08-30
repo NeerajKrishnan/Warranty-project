@@ -22,6 +22,7 @@ Warranty management software
 
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'views/product.xml',
         'views/warranty.xml',
          'data/data.xml'

@@ -82,6 +82,8 @@ class Warranty(models.Model):
                     'domain' : {'product_serial_id' : [('product_id.name','=',self.product_name_id.name)] }
                 }
 
+    def check(self):
+        print("jsfg")
 
     warranty_period_form = fields.Integer(related='product_name_id.warranty_period')
     warranty_type_form = fields.Selection(related='product_name_id.warranty_type')
