@@ -1,4 +1,6 @@
 #/bin/sh
+git checkout -b master
+
 git add .
 git commit -m "[ADD] Initial commit"
 git push project master 
