@@ -12,7 +12,8 @@
         </field>
 
          <xpath expr="//page[@name='general_information']" position="after"  >
-                <page name="notebook_warranty" string="Warranty"   attrs="{'invisible':[('has_warranty','!=',True)]}">
+                <page name="notebook_warranty" string="Warranty"
+                      attrs="{'invisible':[('has_warranty','!=',True)]}">
                     <group>
                     <group>
                     <field name="warranty_type" ></field>

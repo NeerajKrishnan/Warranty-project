@@ -23,9 +23,13 @@ Warranty management software
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
+        'data/data.xml',
+        'wizards/create_warning_approval.xml',
+        'data/cron.xml',
         'views/product.xml',
         'views/warranty.xml',
-         'data/data.xml'
+
+
     ],
     'installable': True,
     'application': True,

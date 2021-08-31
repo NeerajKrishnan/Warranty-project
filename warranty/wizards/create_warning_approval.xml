@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record id="warning_manager_approval_form" model="ir.ui.view">
+            <field name="name">Warning</field>
+            <field name="model">create.warning.approval</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group class="oe_title">
+                        <p>
+                Managers need to approve
+                        </p>
+                    </group>
+                    <footer>
+
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="warning_approval_window" model="ir.actions.act_window">
+            <field name="name">Manager Approval</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">create.warning.approval</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="warning_manager_approval_form"/>
+            <field name="target">new</field>
+        </record>
+</odoo>

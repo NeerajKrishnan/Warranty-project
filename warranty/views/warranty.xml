@@ -11,9 +11,14 @@
                     <button name="action_draft" string="Conform"
                             class="btn-primary" states='new'   type="object" />
                     <button name="action_to_approve" states='invoice'
-                            string="To approve"
+                            string="To Approve"
                             groups="warranty.group_warranty_manager"
                             class="btn-primary" type="object"/>
+                    <button name="%(warranty.warning_approval_window)d"
+                            states='invoice'
+                            string="To Approve"
+                            groups="warranty.group_warranty_user"
+                            class="btn-primary" type="action"/>
 
                     <field name="state" widget="statusbar"/>
                     <button name="action_invoice" string="Invoice"
@@ -25,7 +30,8 @@
                     <button name="action_approved" string="Approved"
                             states="to approve"
                             class="btn-primary" type="object"/>
-                    <button name="action_cancel" string="Cancel" type="object"/>
+                    <button name="action_cancel" string="Cancel" states="
+new,draft,invoice,to approve,approved" type="object"/>
                 </header>
                 <sheet>
 
@@ -43,10 +49,18 @@
                             <field name="address_zip"></field>
                         </group>
                         <group >
-                            <field name="date_request"  states="draft,invoice,to approve,approved,cancel">
+                            <field name="date_request"
+                                   states="draft,invoice,to approve
+                                   ,approved,cancel">
                             </field>
-                            <field name="date_invoice" states="invoice,to approve,approved,cancel"></field>
-                            <field name="date_expiration" states="invoice,to approve,approved,cancel"></field>
+                            <field name="date_invoice"
+                                   states="invoice,to approve,approved,cancel">
+
+                            </field>
+                            <field name="date_expiration"
+                                   states="invoice,to approve,approved,cancel">
+
+                            </field>
                         </group>
 
                     </group>
