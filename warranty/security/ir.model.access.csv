@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_create_warning_approval,access.create_warning_approval,model_create_warning_approval,group_warranty_user,1,1,1,1
 access_warranty_request_manager,access.warranty_request_manager,model_warranty_request,group_warranty_manager,1,1,1,1
-access_warranty_request_user,access.warranty_request_user,model_warranty_request,group_warranty_user,1,1,1,0
+access_warranty_request_user,access.warranty_request_manager,model_warranty_request,group_warranty_user,1,1,1,1
+
 
 
 

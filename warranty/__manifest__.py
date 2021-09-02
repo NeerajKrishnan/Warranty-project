@@ -17,8 +17,12 @@ Warranty management software
                 'mail',
                 'sale',
                 'account',
-                'purchase'
-                ],
+                'purchase',
+                'stock',
+                'mrp',
+                'resource'
+
+            ],
 
     'data': [
         'security/ir.model.access.csv',
@@ -28,6 +32,7 @@ Warranty management software
         'data/cron.xml',
         'views/product.xml',
         'views/warranty.xml',
+        'data/Inventory.xml'
 
 
     ],

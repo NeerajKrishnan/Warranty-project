@@ -128,13 +128,29 @@ class Warranty(models.Model):
 
     def action_draft(self):
         self.state = 'draft'
-        self.product_name_id
+        test = self.env['stock.picking'].create({
+            'name': self.sequence_number,
+            'location_id': 8,
+            'picking_type_id': 5,
+            'location_dest_id': 38,
+            'move_ids_without_package':
+                [{'product_id': 23}]
+            # 'product_uom_qty': 10,
+            # 'product_uom': 1
+        })
+        test.action_confirm()
+
+
 
     def action_to_approve(self):
         self.state = 'to approve'
 
+
+
+
     def action_approved(self):
         self.state = 'approved'
+
 
     def action_cancel(self):
         self.state = 'cancel'

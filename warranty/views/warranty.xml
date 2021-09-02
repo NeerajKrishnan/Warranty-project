@@ -12,13 +12,7 @@
                             class="btn-primary" states='new'   type="object" />
                     <button name="action_to_approve" states='invoice'
                             string="To Approve"
-                            groups="warranty.group_warranty_manager"
                             class="btn-primary" type="object"/>
-                    <button name="%(warranty.warning_approval_window)d"
-                            states='invoice'
-                            string="To Approve"
-                            groups="warranty.group_warranty_user"
-                            class="btn-primary" type="action"/>
 
                     <field name="state" widget="statusbar"/>
                     <button name="action_invoice" string="Invoice"
@@ -29,6 +23,7 @@
 
                     <button name="action_approved" string="Approved"
                             states="to approve"
+                            groups="warranty.group_warranty_manager"
                             class="btn-primary" type="object"/>
                     <button name="action_cancel" string="Cancel" states="
 new,draft,invoice,to approve,approved" type="object"/>
