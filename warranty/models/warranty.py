@@ -8,7 +8,6 @@ class Warranty(models.Model):
     _description = 'warrant app'
     _inherit = ['mail.thread']
     _rec_name = 'sequence_number'
-
     customer_id = fields.Many2one('res.partner', string="Customer",
                                   required=True, tracking=True,
 
@@ -44,6 +43,8 @@ class Warranty(models.Model):
                               ('invoice', 'Invoice'),
                               ('to approve', 'To Approve'),
                               ('approved', 'Approved'),
+                              ('received', 'Product Received'),
+                              ('done','Done'),
                               ('cancel', 'Cancel')]
                              , default='new', tracking=True)
     sequence_number = fields.Char(string='Order Reference',
@@ -84,9 +85,13 @@ class Warranty(models.Model):
                                                     ('readonly', True)],
                                                 'approved': [('readonly', True)]
                                             , 'cancel': [('readonly', True)]})
+    test_23=fields.Many2one('warranty.request')
+
+    t2=fields.One2many('warranty.request','test_23')
+
 
     def filter_serials(self):
-        print("test")
+                 print("")
 
     @api.onchange('product_name_id')
     def _filter_serial_id(self):
@@ -97,12 +102,18 @@ class Warranty(models.Model):
                                                         False)])
         print(test)
         print(self.product_serial_id.name)
+
         return {
             'domain': {'product_serial_id': [('product_id.name', '=',
                                               self.product_name_id.name),
+
                                              ('name', 'not in',
                                               [i.product_serial_id.name for i in
-                                               test])]}
+                                               test])
+
+                                             ],
+
+                       'test_flieds': [('location_id.id','=',5)]  }
 
         }
 
@@ -128,22 +139,26 @@ class Warranty(models.Model):
 
     def action_draft(self):
         self.state = 'draft'
-        test = self.env['stock.picking'].create({
-            'name': self.sequence_number,
-            'location_id': 8,
-            'picking_type_id': 5,
-            'location_dest_id': 38,
-            'move_ids_without_package':
-                [{'product_id': 23}]
-            # 'product_uom_qty': 10,
-            # 'product_uom': 1
-        })
-        test.action_confirm()
-
 
 
     def action_to_approve(self):
         self.state = 'to approve'
+        print("dsfksjfhj")
+        print(self.t2)
+        stock_location = self.env.ref('stock.stock_location_stock')
+        move = self.env['stock.move'].create({
+            'name': 'MV_'+self.sequence_number,
+            'location_id': 8,
+            'location_dest_id': 38,
+            'product_id': self.product_serial_id.product_id.id,
+            'product_uom': self.product_name_id.uom_id.id,
+            'product_uom_qty': 1
+        })
+        move._action_confirm()
+        move._action_assign()
+        move.move_line_ids.write({'qty_done': 1})
+        move._action_done()
+
 
 
 
@@ -151,12 +166,29 @@ class Warranty(models.Model):
     def action_approved(self):
         self.state = 'approved'
 
+    def action_recieved(self):
+        self.state='received'
+    #     customer_location to warranty
+
 
     def action_cancel(self):
         self.state = 'cancel'
 
     def action_invoice(self):
         self.state = 'invoice'
+
+
+    def action_return(self):
+        self.state='done'
+    #     warranty ---> customer
+    #     go to the done stage
+    def preview_sale_order(self):
+        print("sn")
+        return {
+            'type': 'warranty.request',
+            'target': 'self'
+        }
+
 
     @api.model
     def create(self, vals):

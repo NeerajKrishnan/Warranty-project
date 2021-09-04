@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+
                     <button name="action_draft" string="Conform"
                             class="btn-primary" states='new'   type="object" />
                     <button name="action_to_approve" states='invoice'
@@ -18,6 +19,15 @@
                     <button name="action_invoice" string="Invoice"
                             states="draft"
                             class="btn-primary" type="object"/>
+                    <button name="action_recieved" string="Recieved"
+                            states="approved"
+                            class="btn-primary" type="object"/>
+                    <button name="action_return"
+                            string="Return"
+                            states="received"  class="btn-primary"
+
+                            type="object"/>
+
 
 
 
@@ -30,12 +40,24 @@ new,draft,invoice,to approve,approved" type="object"/>
                 </header>
                 <sheet>
 
+                   <div class="oe_button_box" name="button_box">
+                        <button name="preview_sale_order" type="object" class="oe_stat_button" icon="fa-arrows-h ">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Stock</span>
+                                <span class="o_stat_text">Moves</span>
+                            </div>
+                        </button>
+
+                    </div>
+
                     <div class="oe_title">
                         <h1>
                             <field name="sequence_number" readonly="1"/>
                         </h1>
                     </div>
                     <group>
+
+
                         <group>
                             <field name="customer_id" ></field>
                             <field name="company_id"></field>
@@ -60,7 +82,25 @@ new,draft,invoice,to approve,approved" type="object"/>
 
                     </group>
 
-                    <group>
+
+
+
+
+
+                 <notebook states="invoice,to approve,approved,cancel">
+                        <page string="Warranty Info" name="other info">
+
+
+                            <p></p>
+                            <div class = "oe_edit_only">
+                    <group states="invoice,to approve,approved,cancel">
+<group >
+    <field name="product_name_id" ></field>
+    <field name="product_serial_id"></field>
+</group>
+ </group>
+
+                                               <group>
                         <group states="invoice,to approve,approved,cancel">
                                 <field name="warranty_type_form"></field>
                                 <field name="warranty_period_form"></field>
@@ -70,13 +110,17 @@ new,draft,invoice,to approve,approved" type="object"/>
 
 
 
+</div>
+                        </page>
 
-                    <group states="invoice,to approve,approved,cancel">
-<group >
-    <field name="product_name_id" ></field>
-    <field name="product_serial_id"></field>
-</group>
- </group>
+                        <page string="Other Info" name="other info">
+                            <tree>
+                                 <field name="t2"  bottom="True"></field>
+
+                            </tree>
+                        </page>
+                    </notebook>
+
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>

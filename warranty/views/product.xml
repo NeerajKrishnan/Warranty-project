@@ -19,7 +19,8 @@
                     <field name="warranty_type" ></field>
                     </group>
                     <group>
-                    <field name="warranty_period" string="ndsf"></field>
+                    <field name="warranty_period"
+                           string="Warranty Period(in Days)"></field>
                     </group>
                     <group>
                     </group>
