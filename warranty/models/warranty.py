@@ -85,9 +85,7 @@ class Warranty(models.Model):
                                                     ('readonly', True)],
                                                 'approved': [('readonly', True)]
                                             , 'cancel': [('readonly', True)]})
-    test_23=fields.Many2one('warranty.request')
-
-    t2=fields.One2many('warranty.request','test_23')
+    other_info=fields.One2many('warranty.request.filter','warranty_filter_id')
 
 
     def filter_serials(self):
@@ -144,7 +142,6 @@ class Warranty(models.Model):
     def action_to_approve(self):
         self.state = 'to approve'
         print("dsfksjfhj")
-        print(self.t2)
         stock_location = self.env.ref('stock.stock_location_stock')
         move = self.env['stock.move'].create({
             'name': 'MV_'+self.sequence_number,
@@ -182,13 +179,15 @@ class Warranty(models.Model):
         self.state='done'
     #     warranty ---> customer
     #     go to the done stage
-    def preview_sale_order(self):
-        print("sn")
-        return {
-            'type': 'warranty.request',
-            'target': 'self'
+    def warranty_stock_move(self):
+       return {
+            'name': _('Stock Move'),
+            'res_model': 'stock.move.line',
+            'view_mode': 'tree,form',
+            'view_id':False,
+            'type': 'ir.actions.act_window',
+            'domain': [('reference','like','WH/IN')]
         }
-
 
     @api.model
     def create(self, vals):

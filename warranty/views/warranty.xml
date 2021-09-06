@@ -10,7 +10,7 @@
                 <header>
 
                     <button name="action_draft" string="Conform"
-                            class="btn-primary" states='new'   type="object" />
+                            class="btn-primary" states='new' type="object"/>
                     <button name="action_to_approve" states='invoice'
                             string="To Approve"
                             class="btn-primary" type="object"/>
@@ -24,11 +24,9 @@
                             class="btn-primary" type="object"/>
                     <button name="action_return"
                             string="Return"
-                            states="received"  class="btn-primary"
+                            states="received" class="btn-primary"
 
                             type="object"/>
-
-
 
 
                     <button name="action_approved" string="Approved"
@@ -40,8 +38,9 @@ new,draft,invoice,to approve,approved" type="object"/>
                 </header>
                 <sheet>
 
-                   <div class="oe_button_box" name="button_box">
-                        <button name="preview_sale_order" type="object" class="oe_stat_button" icon="fa-arrows-h ">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="warranty_stock_move" type="object"
+                                class="oe_stat_button" icon="fa-arrows-h ">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">Stock</span>
                                 <span class="o_stat_text">Moves</span>
@@ -59,13 +58,13 @@ new,draft,invoice,to approve,approved" type="object"/>
 
 
                         <group>
-                            <field name="customer_id" ></field>
+                            <field name="customer_id"></field>
                             <field name="company_id"></field>
                             <field name="address_country_id"></field>
                             <field name="address_state_id"></field>
                             <field name="address_zip"></field>
                         </group>
-                        <group >
+                        <group>
                             <field name="date_request"
                                    states="draft,invoice,to approve
                                    ,approved,cancel">
@@ -83,39 +82,38 @@ new,draft,invoice,to approve,approved" type="object"/>
                     </group>
 
 
-
-
-
-
-                 <notebook states="invoice,to approve,approved,cancel">
+                    <notebook states="invoice,to approve,approved,cancel">
                         <page string="Warranty Info" name="other info">
 
 
                             <p></p>
-                            <div class = "oe_edit_only">
-                    <group states="invoice,to approve,approved,cancel">
-<group >
-    <field name="product_name_id" ></field>
-    <field name="product_serial_id"></field>
-</group>
- </group>
+                            <div class="oe_edit_only">
+                                <group states="invoice,to approve,approved,cancel">
+                                    <group>
+                                        <field name="product_name_id"></field>
+                                        <field name="product_serial_id"></field>
+                                    </group>
+                                </group>
 
-                                               <group>
-                        <group states="invoice,to approve,approved,cancel">
-                                <field name="warranty_type_form"></field>
-                                <field name="warranty_period_form"></field>
+                                <group>
+                                    <group states="invoice,to approve,approved,cancel">
+                                        <field name="warranty_type_form"></field>
+                                        <field name="warranty_period_form"></field>
 
-                        </group>
-                    </group>
+                                    </group>
+                                </group>
 
 
-
-</div>
+                            </div>
                         </page>
 
                         <page string="Other Info" name="other info">
                             <tree>
-                                 <field name="t2"  bottom="True"></field>
+                                <field name="other_info" editable="bottom">
+                                    <tree>
+                                        <field name="product_id"></field>
+                                    </tree>
+                                </field>
 
                             </tree>
                         </page>
@@ -140,7 +138,7 @@ new,draft,invoice,to approve,approved" type="object"/>
                 <field name="product_name_id"></field>
                 <field name="product_serial_id"></field>
                 <field name="date_request"></field>
-                <field name ="date_invoice"></field>
+                <field name="date_invoice"></field>
                 <field name="state"></field>
 
             </tree>
@@ -148,36 +146,25 @@ new,draft,invoice,to approve,approved" type="object"/>
     </record>
 
     <record id="view_warranty_search" model="ir.ui.view">
-            <field name="name">warranty.request.search</field>
-            <field name="model">warranty.request</field>
-            <field name="arch" type="xml">
-                <search>
-                    <field  name="customer_id"></field>
-                    <filter string="Date Request" name="date_request"
-                            date="create_date"/>
-                    <filter string="Date Invoice" name="date_invoice"
-                            date="create_date"/>
+        <field name="name">warranty.request.search</field>
+        <field name="model">warranty.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="customer_id"></field>
+                <filter string="Date Request" name="date_request"
+                        date="create_date"/>
+                <filter string="Date Invoice" name="date_invoice"
+                        date="create_date"/>
 
-                    <group expand="0" string="Group By">
-                        <filter string="Status" name="state"
-                                context="{'group_by': 'state'}"/>
-                        <filter string="Customer" name="customer_id"
-                                context="{'group_by': 'customer_id'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-
-
-
-
-
-
-
-
-
-
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Customer" name="customer_id"
+                            context="{'group_by': 'customer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
 
     <record id="action_warranty_home" model="ir.actions.act_window">
@@ -193,15 +180,6 @@ new,draft,invoice,to approve,approved" type="object"/>
     </record>
 
 
-
-
-
-
-
-
-
-
-
     <record id="action_warranty_order" model="ir.actions.act_window">
         <field name="name">Request for Warranty</field>
         <field name="type">ir.actions.act_window</field>
@@ -213,10 +191,6 @@ new,draft,invoice,to approve,approved" type="object"/>
             </p>
         </field>
     </record>
-
-
-
-
 
 
     <menuitem id="view_warranty_root"
