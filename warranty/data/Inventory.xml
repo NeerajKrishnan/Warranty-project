@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <record id="stock_location_create" model="stock.location">
-            <field name="name">Warranty</field>
+        <record id="stock_location_service" model="stock.location">
+            <field name="name"> Service warranty</field>
+            <field name="location_id">1</field>
+            <field name="usage">internal</field>
+        </record>
+        <record id="stock_location_replacement" model="stock.location">
+            <field name="name"> Replacement warranty</field>
             <field name="location_id">1</field>
             <field name="usage">internal</field>
         </record>

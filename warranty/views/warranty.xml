@@ -8,116 +8,55 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-
-                    <button name="action_draft" string="Conform"
-                            class="btn-primary" states='new' type="object"/>
-                    <button name="action_to_approve" states='invoice'
-                            string="To Approve"
-                            class="btn-primary" type="object"/>
-
                     <field name="state" widget="statusbar"/>
-                    <button name="action_invoice" string="Invoice"
-                            states="draft"
+                    <button name="action_draft"  states='first' string="Draft"
+                            class="btn-primary"  type="object"/>
+                    <button name="action_to_approve" states='draft' string="To Approve"
                             class="btn-primary" type="object"/>
-                    <button name="action_recieved" string="Recieved"
-                            states="approved"
-                            class="btn-primary" type="object"/>
-                    <button name="action_return"
-                            string="Return"
-                            states="received" class="btn-primary"
-
-                            type="object"/>
-
-
-                    <button name="action_approved" string="Approved"
-                            states="to approve"
-                            groups="warranty.group_warranty_manager"
-                            class="btn-primary" type="object"/>
-                    <button name="action_cancel" string="Cancel" states="
-new,draft,invoice,to approve,approved" type="object"/>
+                     <button name="action_approve" states='to approve' string="Approved"
+                             groups="warranty.group_warranty_manager"
+                            class="btn-primary"  type="object"/>
+                     <button name="action_cancel"  string="cancel"
+                          states="draft,to approve,approved" type="object"/>
                 </header>
                 <sheet>
-
-                    <div class="oe_button_box" name="button_box">
-                        <button name="warranty_stock_move" type="object"
-                                class="oe_stat_button" icon="fa-arrows-h ">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_text">Stock</span>
-                                <span class="o_stat_text">Moves</span>
-                            </div>
-                        </button>
-
-                    </div>
-
                     <div class="oe_title">
-                        <h1>
-                            <field name="sequence_number" readonly="1"/>
-                        </h1>
+                    <h1>
+                    <field name="sequence_number" readonly="1"/>
+                    </h1>
                     </div>
+                      <group>
+                    <group>
+                            <field name="customer_id"></field>
+                    </group>
+
+                           <group>
+
+                            <field name="product_id"></field>
+                            <field name="serial_number_id"></field>
+
+
+                        </group>
+                      </group>
+
+
+                <group>
                     <group>
 
+                            <field name="invoice_id"></field>
+                            <field name="invoice_date"></field>
+                            <field name="requested_date"></field>
+                            <field name="warranty_expire_date"></field>
 
-                        <group>
-                            <field name="customer_id"></field>
-                            <field name="company_id"></field>
-                            <field name="address_country_id"></field>
-                            <field name="address_state_id"></field>
-                            <field name="address_zip"></field>
                         </group>
-                        <group>
-                            <field name="date_request"
-                                   states="draft,invoice,to approve
-                                   ,approved,cancel">
-                            </field>
-                            <field name="date_invoice"
-                                   states="invoice,to approve,approved,cancel">
 
-                            </field>
-                            <field name="date_expiration"
-                                   states="invoice,to approve,approved,cancel">
 
-                            </field>
-                        </group>
 
                     </group>
 
 
-                    <notebook states="invoice,to approve,approved,cancel">
-                        <page string="Warranty Info" name="other info">
 
 
-                            <p></p>
-                            <div class="oe_edit_only">
-                                <group states="invoice,to approve,approved,cancel">
-                                    <group>
-                                        <field name="product_name_id"></field>
-                                        <field name="product_serial_id"></field>
-                                    </group>
-                                </group>
-
-                                <group>
-                                    <group states="invoice,to approve,approved,cancel">
-                                        <field name="warranty_type_form"></field>
-                                        <field name="warranty_period_form"></field>
-
-                                    </group>
-                                </group>
-
-
-                            </div>
-                        </page>
-
-                        <page string="Other Info" name="other info">
-                            <tree>
-                                <field name="other_info" editable="bottom">
-                                    <tree>
-                                        <field name="product_id"></field>
-                                    </tree>
-                                </field>
-
-                            </tree>
-                        </page>
-                    </notebook>
 
                 </sheet>
                 <div class="oe_chatter">
@@ -133,14 +72,9 @@ new,draft,invoice,to approve,approved" type="object"/>
         <field name="model">warranty.request</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="sequence_number"></field>
+                <field name="sequence_number" readonly="1"/>
                 <field name="customer_id"></field>
-                <field name="product_name_id"></field>
-                <field name="product_serial_id"></field>
-                <field name="date_request"></field>
-                <field name="date_invoice"></field>
                 <field name="state"></field>
-
             </tree>
         </field>
     </record>
@@ -150,18 +84,7 @@ new,draft,invoice,to approve,approved" type="object"/>
         <field name="model">warranty.request</field>
         <field name="arch" type="xml">
             <search>
-                <field name="customer_id"></field>
-                <filter string="Date Request" name="date_request"
-                        date="create_date"/>
-                <filter string="Date Invoice" name="date_invoice"
-                        date="create_date"/>
 
-                <group expand="0" string="Group By">
-                    <filter string="Status" name="state"
-                            context="{'group_by': 'state'}"/>
-                    <filter string="Customer" name="customer_id"
-                            context="{'group_by': 'customer_id'}"/>
-                </group>
             </search>
         </field>
     </record>
@@ -191,8 +114,6 @@ new,draft,invoice,to approve,approved" type="object"/>
             </p>
         </field>
     </record>
-
-
     <menuitem id="view_warranty_root"
               name="Warranty"
               action="action_warranty_home"
