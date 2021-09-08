@@ -32,7 +32,8 @@ Warranty management software
         'data/cron.xml',
         'views/product.xml',
         'views/warranty.xml',
-        'data/Inventory.xml'
+        'data/Inventory.xml',
+        'views/invoicing.xml'
 
 
     ],

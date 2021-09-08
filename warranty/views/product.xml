@@ -7,7 +7,7 @@
     <field name="arch" type="xml">
         <field name="purchase_ok" position="before">
 
-            <field name="has_warranty"/><strong> Has a Warranty</strong>
+            <field name="has_warranty"/><strong>Has a Warranty</strong>
             <br></br>
         </field>
 
@@ -20,7 +20,7 @@
                     </group>
                     <group>
                     <field name="warranty_period"
-                           string="Warranty Period(in Days)"></field>
+                           string="Warranty Period(Days)"></field>
                     </group>
                     <group>
                     </group>

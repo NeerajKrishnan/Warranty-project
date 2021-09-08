@@ -12,22 +12,25 @@ class Warranty(models.Model):
     sequence_number = fields.Char(string='Order Reference',
                                   copy=False, readonly=True,
                                   default=lambda self: _('New'))
-    customer_id = fields.Many2one('res.partner')
-    invoice_id = fields.Many2one('account.move')
+    customer_id = fields.Many2one('res.partner', required=True)
+    invoice_id = fields.Many2one('account.move', required=True)
     invoice_date = fields.Date(related='invoice_id.invoice_date')
     product_from_invoice = fields.One2many(related='invoice_id.invoice_line_ids'
                                            )
-    product_id = fields.Many2one('product.template')
-    serial_number_id = fields.Many2one('stock.production.lot')
+    product_id = fields.Many2one('product.template', required=True)
+    serial_number_id = fields.Many2one('stock.production.lot', required=True)
     requested_date = fields.Date(string="Requested Date",
                                  default=datetime.today(),
-                                 readonly=True)
+                                 readonly=True, required=True)
     warranty_expire_date = fields.Date(string='Expiration Date',
                                        compute='_compute_expiration_date')
     warranty_period_form = fields.Integer(related='product_id.warranty_period')
     state = fields.Selection([('first', ''), ('draft', 'Draft'),
                               ('to approve', 'To Approve'),
-                              ('approved', 'Approved'), ('cancel', 'Cancel')],
+                              ('approved', 'Approved'),
+                              ('received', 'Received'),
+                              ('done', 'Done'),
+                              ('cancel', 'Cancel')],
                              default='first')
 
     @api.depends('invoice_date')
@@ -66,10 +69,17 @@ class Warranty(models.Model):
 
     @api.onchange('product_id')
     def filter_lot_or_serial(self):
+        test = self.env['stock.quant'].search([('location_id.id','=',5),
+                                               ('quantity', '>', 0)
+                                               ])
+
         return {
             'domain': {
                 'serial_number_id': [('product_id.name', '=',
-                                      self.product_id.name)]
+                                      self.product_id.name),
+                                     ('name', 'in',
+                                      [i.name for i in test.lot_id]),
+                                     ]
 
             }
         }
@@ -90,7 +100,124 @@ class Warranty(models.Model):
         self.state = 'to approve'
 
     def action_approve(self):
-        self.state = 'approved'
+        self.state = 'received'
+
+        test = self.env['stock.quant'].search([('product_id.name', '='
+                                                , self.product_id.name)
+                                                  ,
+                                               ('lot_id.name', '=',
+                                                self.serial_number_id.name)
+                                                  ,
+                                               ('quantity', '>', 0)
+                                                  ,
+                                               ('location_id.id', '=', 5)
+                                               ])
+
+        if self.product_id.warranty_type == 'replacement_warranty':
+
+            trans = self.env['stock.picking'].create({
+                'name': 'REC' + self.sequence_number,
+                'picking_type_id': 5,
+                'location_id': 5,
+                'location_dest_id': 39,
+                'move_lines': [(0, 0, {
+                    'name': 'REC' + self.sequence_number,
+                    'product_id': test.product_id.id,
+                    'product_uom':  test.product_id.uom_id.id,
+                     'lot_ids': [{ test.lot_id.id}],
+                    'product_uom_qty': 1
+                })]
+            })
+            trans.action_confirm()
+            trans.button_validate()
+        if self.product_id.warranty_type == 'service_warranty':
+
+            trans = self.env['stock.picking'].create({
+                'name': 'REC' + self.sequence_number,
+                'picking_type_id': 5,
+                'location_id': 5,
+                'location_dest_id': 38,
+                'move_lines': [(0, 0, {
+                    'name': 'REC' + self.sequence_number,
+                    'product_id': test.product_id.id,
+                    'product_uom':  test.product_id.uom_id.id,
+                    'lot_ids': [{ test.lot_id.id}],
+                    'product_uom_qty': 1
+                })]
+            })
+            trans.action_confirm()
+            trans.button_validate()
+
+
+    def action_return_product(self):
+        self.state = 'done'
+        if self.product_id.warranty_type == 'replacement_warranty':
+            print("self")
+            test = self.env['stock.quant'].search([('product_id.name', '='
+                                                , self.product_id.name)
+                                                  ,
+                                               ('lot_id.name', '=',
+                                                self.serial_number_id.name)
+                                                  ,
+                                               ('quantity', '>', 0)
+                                                  ,
+                                               ('location_id.id', '=', 39)
+                                               ])
+            product_id_id = test.product_id
+            serial_id_id = test.lot_id
+            trans = self.env['stock.picking'].create({
+               'name': 'REP' + self.sequence_number,
+                'picking_type_id': 5,
+                'location_id': 39,
+                'location_dest_id': 5,
+                'move_lines': [(0, 0, {
+                'name': 'REP' + self.sequence_number,
+                'product_id': product_id_id.id,
+                'product_uom': product_id_id.uom_id.id,
+                'lot_ids': [{serial_id_id.id}],
+                'product_uom_qty': 1
+            })]
+            })
+            trans.action_confirm()
+            trans.button_validate()
+        if self.product_id.warranty_type == 'service_warranty':
+            test = self.env['stock.quant'].search([('product_id.name', '='
+                                                , self.product_id.name)
+                                                  ,
+                                               ('lot_id.name', '=',
+                                                self.serial_number_id.name)
+                                                  ,
+                                               ('quantity', '>', 0)
+                                                  ,
+                                               ('location_id.id', '=', 38)
+                                               ])
+            product_id_id = test.product_id
+            serial_id_id = test.lot_id
+            print (serial_id_id.id)
+            trans = self.env['stock.picking'].create({
+               'name': 'RET' + self.sequence_number,
+                'picking_type_id': 5,
+                'location_id': 38,
+                'location_dest_id': 5,
+                'move_lines': [(0, 0, {
+                'name': 'RET' + self.sequence_number,
+                'product_id': product_id_id.id,
+                'product_uom': product_id_id.uom_id.id,
+                'lot_ids': [{serial_id_id.id}],
+                'product_uom_qty': 1
+            })]
+            })
+            trans.action_confirm()
+            trans.button_validate()
+
+    def preview_stock_move(self):
+        return {
+            'name': _('Stock Move'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree',
+            'res_model': 'stock.picking',
+            'domain': [('name','ilike',self.sequence_number)]
+        }
 
     def action_cancel(self):
         self.state = 'cancel'

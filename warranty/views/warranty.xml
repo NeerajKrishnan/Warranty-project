@@ -9,39 +9,61 @@
             <form>
                 <header>
                     <field name="state" widget="statusbar"/>
-                    <button name="action_draft"  states='first' string="Draft"
-                            class="btn-primary"  type="object"/>
-                    <button name="action_to_approve" states='draft' string="To Approve"
+                    <button name="action_draft" states='first' string="Draft"
                             class="btn-primary" type="object"/>
-                     <button name="action_approve" states='to approve' string="Approved"
-                             groups="warranty.group_warranty_manager"
-                            class="btn-primary"  type="object"/>
-                     <button name="action_cancel"  string="cancel"
-                          states="draft,to approve,approved" type="object"/>
+
+                    <button name="action_return_product" states='received'
+                            string="Return Product"
+                            class="btn-primary" type="object"/>
+                    <button name="action_to_approve" states='draft'
+                            string="To Approve"
+                            class="btn-primary" type="object"/>
+                    <button name="action_approve" states='to approve'
+                            string="Approved"
+                            groups="warranty.group_warranty_manager"
+                            class="btn-primary" type="object"/>
+                    <button name="action_cancel" string="cancel"
+                            states="draft,to approve,approved" type="object"/>
                 </header>
                 <sheet>
-                    <div class="oe_title">
-                    <h1>
-                    <field name="sequence_number" readonly="1"/>
-                    </h1>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="preview_stock_move"
+                                type="object"
+                                class="oe_stat_button" icon="fa-arrows-h">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Stock</span>
+                                <span class="o_stat_text">Move</span>
+                            </div>
+                        </button>
                     </div>
-                      <group>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="sequence_number" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
-                            <field name="customer_id"></field>
-                    </group>
+                        <group>
+                            <field name="customer_id"
+                                   widget="res_partner_many2one"
+                                   context="{'res_partner_search_mode':
+                               'customer', 'show_address': 1,
+                               'show_vat': True}"
+                                   options="{&quot;always_reload&quot;: True}"/>
 
-                           <group>
+                        </group>
+
+                        <group>
 
                             <field name="product_id"></field>
                             <field name="serial_number_id"></field>
 
 
                         </group>
-                      </group>
+                    </group>
 
 
-                <group>
                     <group>
+                        <group>
 
                             <field name="invoice_id"></field>
                             <field name="invoice_date"></field>
@@ -51,11 +73,7 @@
                         </group>
 
 
-
                     </group>
-
-
-
 
 
                 </sheet>
