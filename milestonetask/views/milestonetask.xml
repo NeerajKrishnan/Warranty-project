@@ -20,8 +20,8 @@
         <field name="domain"></field>
         <field name="context"></field>
     </record>
-    <menuitem id="view_warranty_root"
-              name="Milestone Tasks"
-              action="action_test"
-              sequence="2"></menuitem>
+<!--    <menuitem id="view_warranty_root"-->
+<!--              name="Milestone Tasks"-->
+<!--              action="action_test"-->
+<!--              sequence="2"></menuitem>-->
         </odoo>
