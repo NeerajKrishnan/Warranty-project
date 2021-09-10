@@ -9,24 +9,13 @@
 Milestone mangement software
    """,
     'website': 'https://www.cybrosys.com/',
-    'depends': ['product',
-                'barcodes',
-                'digest',
-                'website_slides',
-                'hr',
-                'mail',
-                'sale',
-                'account',
-                'purchase',
-                'stock',
-                'mrp',
-                'resource'
-                ],
+    'depends': ['sale'],
 
     'data': [
         'security/ir.model.access.csv',
-        'views/milestonetask.xml'
-        ,'views/saleorder.xml'
+        'views/saleorder.xml',
+        'views/milestonetask.xml',
+
 
     ],
     'installable': True,

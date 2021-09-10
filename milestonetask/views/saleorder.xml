@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-   <record id="view_order_property_form_view" model="ir.ui.view">
-            <field name="name">sale.order.property.form</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
-                       <xpath  expr="/field[@name='partner_id']" position="after">
-                           <field name="x"></field>
-                        </xpath>
-            </field> </record>
+    <record id="inherited_warranty_info_form" model="ir.ui.view">
+        <field name="name">sale.order.inherited.so</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header " position="inside">
+
+                 <button name="action_create_project" class="btn btn-secondary" string="Create Project" type="object"
+                        />
+
+         </xpath>
+            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='name']" position="after">
+
+<field name="milestone"></field>
+
+            </xpath>
+        </field>
+    </record>
 </odoo>
