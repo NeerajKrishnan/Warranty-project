@@ -13,8 +13,8 @@ Milestone mangement software
 
     'data': [
         'security/ir.model.access.csv',
-        'views/saleorder.xml',
-        'views/milestonetask.xml',
+        'views/sale_order.xml',
+        'views/milestone_task.xml',
 
 
     ],

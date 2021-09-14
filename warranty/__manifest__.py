@@ -25,8 +25,8 @@ Warranty management software
             ],
 
     'data': [
-        'security/ir.model.access.csv',
         'security/security.xml',
+        'security/ir.model.access.csv',
         'data/data.xml',
         'wizards/create_warning_approval.xml',
         'data/cron.xml',

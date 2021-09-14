@@ -7,11 +7,13 @@
         <field name="arch" type="xml">
             <xpath expr="//header " position="inside">
 
-                 <button name="action_create_project"  string="Create Project" type="object"
+                 <button name="action_create_project"  string="Create Project"
+                         type="object"
                         />
 
          </xpath>
-            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='name']" position="after">
+            <xpath expr="/form/sheet/notebook/page/field[@name='order_line']
+            /tree/field[@name='name']" position="after">
 
 <field name="milestone"></field>
 

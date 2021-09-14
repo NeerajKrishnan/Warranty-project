@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="form_view_order" model="ir.ui.view">
+        <field name="name">milestone.task.view.form</field>
+        <field name="model">milestone.task</field>
+        <field name="arch" type="xml">
+            <form>
+            </form>
+        </field>
+    </record>
+    <record id="action_test" model="ir.actions.act_window">
+        <field name="name">Actions</field>
+        <field name="res_model">milestone.task</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
