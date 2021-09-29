@@ -45,7 +45,7 @@ class ReportWizard(models.TransientModel):
             # print(self.product_list.read()[0])
 
             data = {
-                'is_partner':{'is_partner':self.partner_id},
+                'is_partner': {'is_partner':self.partner_id},
                 'partner': self.partner_id.read()[0],
                 'field_info': self.read()[0],
                 'product_list':self.product_list.read(),
@@ -128,10 +128,12 @@ class ReportWizard(models.TransientModel):
     def action_print_xls(self):
         temp_list = str(self.product_list.mapped('id'))
         temp_list='('+temp_list[1:-1]+")"
+        is_product_list=False
         sql = 'select * from warranty_request'
         if self.partner_id:
             sql += " where customer_id=" + str(self.partner_id.id) + ""
             if self.product_list:
+                is_product_list=self.product_list.mapped("display_name")
                 sql += " and product_id in " + temp_list
             if self.from_date:
                 if self.to_date:
@@ -149,7 +151,9 @@ class ReportWizard(models.TransientModel):
             data = {
             'id': self.id,
             'model': self._name,
-            'warranty_data': record
+            'warranty_data': record,
+            'form': self.read()[0],
+            'product_list':is_product_list
             }
             return {
             'type': 'ir.actions.report',
@@ -161,40 +165,142 @@ class ReportWizard(models.TransientModel):
                      },
             'report_type': 'xlsx'
              }
+        if self.product_list:
+            is_product_list = self.product_list.mapped("display_name")
+            print(self.read()[0])
+            sql += " where  product_id in " + temp_list
+            if self.from_date:
+                if self.to_date:
+                    sql += " and (requested_date between  '" + str(
+                        self.from_date) \
+                           + "' and '" + str(self.to_date) + "')"
+                else:
+                    sql += " and (requested_date between '" + str(
+                        self.from_date) \
+                           + "' and '" + str(fields.Date.today()) + "')"
+            print(sql)
+            self.env.cr.execute(sql)
+            record = self.env.cr.dictfetchall()
+            print(record)
+            data = {
+                'id': self.id,
+                'model': self._name,
+                'warranty_data': record,
+                'form': self.read()[0],
+                'product_list': is_product_list
+            }
+            return {
+                'type': 'ir.actions.report',
+                'data': {'model': 'report.wizard',
+                         'options': json.dumps(data,
+                                               default=date_utils.json_default),
+                         'output_format': 'xlsx',
+                         'report_name': 'Warranty XLS',
+                         },
+                'report_type': 'xlsx'
+            }
+        if self.from_date:
+            if self.to_date:
+                sql += " where  (requested_date between '" + str(self.from_date) \
+                       + "' and '" + str(self.to_date) + "')"
+            else:
+                sql += " where (requested_date between '" + str(self.from_date) \
+                       + "' and '" + str(fields.Date.today()) + "')"
+
+            print(sql)
+            self.env.cr.execute(sql)
+            record = self.env.cr.dictfetchall()
+            print(record)
+            data = {
+                'id': self.id,
+                'model': self._name,
+                'warranty_data': record,
+                'form': self.read()[0],
+                'product_list': is_product_list
+            }
+            return {
+                'type': 'ir.actions.report',
+                'data': {'model': 'report.wizard',
+                         'options': json.dumps(data,
+                                               default=date_utils.json_default),
+                         'output_format': 'xlsx',
+                         'report_name': 'Warranty XLS',
+                         },
+                'report_type': 'xlsx'
+            }
+        if self.to_date:
+            if self.from_date:
+                sql += " where  (requested_date between '" + str(self.from_date) \
+                       + "' and '" + str(self.to_date) + "')"
+            else:
+                sql += " where requested_date <= '" + str(fields.Date.today()) + "'"
+
+            print(sql)
+            self.env.cr.execute(sql)
+            record = self.env.cr.dictfetchall()
+            data = {
+                'id': self.id,
+                'model': self._name,
+                'warranty_data': record,
+                'form': self.read()[0],
+                'product_list': is_product_list
+            }
+            return {
+                'type': 'ir.actions.report',
+                'data': {'model': 'report.wizard',
+                         'options': json.dumps(data,
+                                               default=date_utils.json_default),
+                         'output_format': 'xlsx',
+                         'report_name': 'Warranty XLS',
+                         },
+                'report_type': 'xlsx'
+            }
+
+
+
+
+
     def get_xlsx_report(self, data, response):
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         sheet = workbook.add_worksheet('Warranty XLS')
         headiing = workbook.add_format({'font_size': 20, 'align': 'center', 'bold': True})
         font_1 = workbook.add_format({'font_size': 10, 'align': 'center', 'bold': True})
+        font_2 = workbook.add_format({'font_size': 12, 'bold': True})
+
         sheet.merge_range('A1:N2', 'Product Warranty',headiing)
-        row=3
-        print(self.partner_id,"ofdj")
-        if self.partner_id:
-
-            sheet.write('A' + str(row), "Customer")
-            sheet.merge_range('B'+str(row)+':C'+str(row) , self.partner_id.name)
+        row=6
+        if data['form']['partner_id']:
+            sheet.merge_range('A' + str(row) + ':B' + str(row), "Customer",font_2)
+            sheet.merge_range('C'+str(row)+':D'+str(row) , data['form']['partner_id'][1])
             row += 2
-        if self.from_date:
-            sheet.write('A'+str(row), "Start Date")
-            sheet.merge_range('B' + str(row) + ':C' + str(row), self.from_date)
+        if data['form']['from_date']:
+            sheet.merge_range('A' + str(row) + ':B' + str(row), "Start Date",font_2)
+            sheet.merge_range('C' + str(row) + ':D' + str(row), data['form']['from_date'])
+            row+=1
+        if data['form']['to_date']:
+            sheet.merge_range('A' + str(row) + ':B' + str(row), "End Date",font_2)
+            sheet.merge_range('C' + str(row) + ':D' + str(row), data['form']['to_date'])
             row+=2
-        if self.to_date:
-            sheet.write('A' + str(row), "End Date")
-            sheet.merge_range('B' + str(row) + ':C' + str(row), self.to_date)
-        if self.product_list:
-            product_items =  self.product_list.mapped("display_name")
-            print(product_items)
 
+        if data['product_list']:
+            sheet.merge_range('A' + str(row) + ':B' + str(row), "Product",font_2)
+            for rec in data['product_list']:
 
+                sheet.merge_range('C' + str(row) + ':D' + str(row),
+                                  rec)
+                row += 1
+        row+=3
 
         sheet.merge_range('A'+str(row)+':B'+str(row) , 'Ref no',font_1)
+        sheet.merge_range('C'+str(row)+':D'+str(row) , 'Invoice Ref',font_1)
         sheet.merge_range('C'+str(row)+':D'+str(row) , 'Invoice Ref',font_1)
         sheet.merge_range('E'+str(row)+':F'+str(row) ,'Product',font_1)
         sheet.merge_range('G'+str(row)+':H'+str(row), 'Warranty Type',font_1)
         sheet.merge_range('I'+str(row)+':J'+str(row), 'Serial Number',font_1)
         sheet.merge_range('K'+str(row)+':L'+str(row), 'Requested Date',font_1)
         sheet.merge_range('M'+str(row)+':N'+str(row), 'State',font_1)
+
         row+=1
         for rec in data['warranty_data']:
             sheet.merge_range('A' + str(row) + ':B' + str(row),
