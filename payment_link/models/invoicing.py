@@ -34,5 +34,6 @@ class Invoicing(models.Model):
         super(Invoicing, self).action_post()
         self.get_link()
         mail_template = self.env.\
-            ref('paymentlink.mail_template_data_payment_link')
+            ref('payment_link.mail_template_data_payment_link')
         mail_template.send_mail(self.id, force_send=True)
+        return super(Invoicing, self).action_post()

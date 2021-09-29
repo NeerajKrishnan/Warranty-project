@@ -28,12 +28,15 @@ Warranty management software
         'security/security.xml',
         'security/ir.model.access.csv',
         'data/data.xml',
-        'wizards/create_warning_approval.xml',
+        'wizards/report_wizard.xml',
         'data/cron.xml',
         'views/product.xml',
         'views/warranty.xml',
         'data/Inventory.xml',
-        'views/invoicing.xml'
+        'views/invoicing.xml',
+'views/action_manager.xml',
+'report/report.xml',
+'report/report_template.xml',
 
 
     ],

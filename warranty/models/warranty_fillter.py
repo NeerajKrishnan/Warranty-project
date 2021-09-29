@@ -7,6 +7,6 @@ class WarrantyFilter(models.Model):
     _name = 'warranty.request.filter'
     _description = 'warrant filtering'
     inv_id = fields.Many2one("warranty.request")
-    product_id = fields.Many2one('product.template')
+    product_id = fields.Many2one('product.product')
     requested_date = fields.Date(name="Requested Date")
 

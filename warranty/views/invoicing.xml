@@ -10,7 +10,7 @@
 
                 <page name="warranty.info" string="Warranty Info">
 
-                    <field name="test">
+                    <field name="report">
                         <tree>
                             <field name="inv_id"></field>
                             <field name="product_id"></field>

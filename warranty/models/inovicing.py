@@ -3,8 +3,9 @@ from odoo import api, fields, models, _
 
 class Invoicing(models.Model):
     _inherit = "account.move"
-    test = fields.Many2many('warranty.request.filter', compute='filters')
-    @api.depends('test')
+    report = fields.Many2many('warranty.request.filter', compute='filters')
+
+    @api.depends('report')
     def filters(self):
         self.env['warranty.request.filter'].search([]).unlink()
         list = []
@@ -20,7 +21,7 @@ class Invoicing(models.Model):
 
                 }
                 list.append([0,0,value])
-            rec.test = list
+            rec.report = list
 
 
 

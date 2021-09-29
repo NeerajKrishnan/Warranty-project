@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+     <template id="report_warranty_wizard">
+        <t t-call="web.html_container">
+
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center">
+                         <h2>Product Warranty</h2>
+                            </div>
+<group>
+<group>
+    <t t-if="field_info['partner_id']">
+        <address>
+        <t t-esc="partner['display_name']"></t><br></br>
+        <t t-if="partner['street']">
+            <t t-esc="partner['street']"></t><br></br>
+        </t>
+            <t t-if="partner['street2']">
+                <t t-esc="partner['street2']"></t><br></br>
+            </t>
+
+            <t t-if="partner['city']">
+                <t t-esc="partner['city']"></t><br></br>
+            </t>
+
+            <t t-if="partner['state_id']">
+                <t t-esc="partner['state_id'][1]"></t><br></br>
+            </t>
+
+            <t t-if="partner['zip']">
+                <t t-esc="partner['zip']"></t>
+            </t>
+        </address>
+    </t>
+    <br></br>
+</group>
+    <group>
+        <t t-if="field_info['product_list']">
+                    <p><strong>Products</strong></p>
+            <t t-foreach="product_list" t-as="p">
+              <t t-esc="p['product_tmpl_id'][1]" ></t><br></br>
+            </t>
+
+
+        </t>
+        <br></br>
+        <group>
+
+            <t t-if="field_info['to_date']">
+                <label>Start Date : </label>
+                <t t-esc="field_info['to_date']"></t>
+                    <br></br>
+            </t>
+            <br></br>
+            <t t-if="field_info['from_date']">
+                <label>End date  : </label>
+                <t t-esc="field_info['from_date']"></t>
+                  <br></br>
+            </t>
+        </group>
+
+
+
+
+</group>
+    <br></br>
+ <table class="table table-condensed" bgcolor="#875A7B">
+     <t t-if="field_info['partner_id']">
+    <tr>
+        <th>Ref No</th>
+        <th>Inovice Ref</th>
+        <th>Product</th>
+        <th>Warranty Type</th>
+        <th>Serial Number</th>
+        <th>Requested Date</th>
+        <th>State</th>
+    </tr>
+
+    <t t-foreach="data" t-as="rec">
+        <tr>
+            <td><t t-esc="rec['sequence_number']"></t> </td>
+            <td><t t-esc="rec['report_invoice_ref']"></t> </td>
+            <td><t t-esc="rec['report_product']"></t> </td>
+            <td>
+                <t t-if="rec['warranty_type'] =='service_warranty'">
+                    Service Warranty
+                </t>
+                <t t-if="rec['warranty_type'] =='replacement_warranty'">
+                    Replacement warranty
+                </t>
+            </td>
+
+            <td><t t-esc="rec['report_serial']"></t> </td>
+            <td><t t-esc="rec['requested_date']"></t></td>
+            <td><t t-esc="rec['state']"></t></td>
+        </tr>
+    </t>
+     </t>
+
+
+
+<t t-if="not field_info['partner_id']">
+    <tr>
+        <th>Ref No</th>
+        <th>Inovice Ref</th>
+        <th>Customer</th>
+        <th>Product</th>
+        <th>Warranty Type</th>
+        <th>Serial Number</th>
+        <th>Requested Date</th>
+        <th>State</th>
+    </tr>
+
+    <t t-foreach="data" t-as="rec">
+        <tr>
+            <td><t t-esc="rec['sequence_number']"></t> </td>
+            <td><t t-esc="rec['report_invoice_ref']"></t> </td>
+            <td><t t-esc="rec['report_customer']"></t> </td>
+            <td><t t-esc="rec['report_product']"></t> </td>
+            <td>
+                <t t-if="rec['warranty_type'] =='service_warranty'">
+                    Service Warranty
+                </t>
+                <t t-if="rec['warranty_type'] =='replacement_warranty'">
+                    Replacement warranty
+                </t>
+            </td>
+
+            <td><t t-esc="rec['report_serial']"></t> </td>
+            <td><t t-esc="rec['requested_date']"></t></td>
+            <td><t t-esc="rec['state']"></t></td>
+        </tr>
+    </t>
+     </t>
+
+
+
+
+
+ </table>
+
+</group>
+
+                    </div>
+                </t>
+     </t>
+
+
+
+    </template>
+
+
+
+
+</odoo>

@@ -6,6 +6,7 @@ class SaleOrderLine(models.Model):
     milestone = fields.Integer(string='Milestone')
 
 
+
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 

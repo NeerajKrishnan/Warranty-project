@@ -64,12 +64,11 @@
 
                     <group>
                         <group>
-
                             <field name="invoice_id"></field>
                             <field name="invoice_date"></field>
                             <field name="requested_date"></field>
                             <field name="warranty_expire_date"></field>
-
+                            <field name="report_invoice_ref"></field>
                         </group>
 
 
@@ -132,13 +131,15 @@
             </p>
         </field>
     </record>
+
+
+
     <menuitem id="view_warranty_root"
               name="Warranty"
               action="action_warranty_home"
               sequence="2"></menuitem>
     <menuitem id="view_warranty_order"
-              name="Request for Warranty"
-              action="action_warranty_order"
+              name="Request"
               parent="view_warranty_root"
               sequence="2"></menuitem>
     <menuitem id="view_warranty_orders"
@@ -146,6 +147,14 @@
               action="action_warranty_order"
               parent="view_warranty_order"
               sequence="2"></menuitem>
-
+    <menuitem id="view_warranty_report_root"
+              name="Report"
+              parent="view_warranty_root"
+              sequence="2"></menuitem>
+    <menuitem id="view_warranty_report"
+              name="Report"
+              parent="view_warranty_report_root"
+              action="warranty_report_window"
+              sequence="2"></menuitem>
 
 </odoo>

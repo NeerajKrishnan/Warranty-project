@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_warranty_request_manager,access.warranty_request_manager,model_warranty_request,,1,1,1,1
 access_warranty_request_filter,access.warranty_request_filter,model_warranty_request_filter,,1,1,1,1
+access_report_wizard,access.report_wizard,model_report_wizard,,1,1,1,1
 
 access_stock_production_lot_user,stock.production.lot user,stock.model_stock_production_lot,stock.group_stock_user,1,1,1,1
 access_stock_production_lot_user,stock.production.lot user,stock.model_stock_production_lot,stock.group_stock_user,1,1,1,1
