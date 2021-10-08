@@ -4,13 +4,12 @@ import pytz
 import json
 import datetime
 import io
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 from odoo.tools import date_utils
 try:
     from odoo.tools.misc import xlsxwriter
 except ImportError:
     import xlsxwriter
-
 
 
 class ReportWizard(models.TransientModel):
@@ -24,18 +23,30 @@ class ReportWizard(models.TransientModel):
     def action_print(self):
         self.ensure_one()
         temp_list = str(self.product_list.mapped('id'))
-        temp_list='('+temp_list[1:-1]+")"
-        sql = 'select * from warranty_request'
+        temp_list = '('+temp_list[1:-1]+")"
+        sql = 'select w.sequence_number,p.display_name,pt.name as product,' \
+              ' w.state,am.name as Invoice ,' \
+              'pp.warranty_type,w.requested_date, ' \
+              'sl.name as Serial from ' \
+              'warranty_request as w,res_partner as p ' \
+              ', product_product as pp, product_template as pt , ' \
+              'account_move as am ' \
+              ',stock_production_lot as sl' \
+              ' where w.customer_id = p.id and pp.id = w.product_id ' \
+              ' and pp.product_tmpl_id = pt.id and am.id=w.invoice_id' \
+              ' and sl.id=w.serial_number_id'
         if self.partner_id:
-            sql += " where customer_id="+str(self.partner_id.id)+""
+            sql += " and w.customer_id="+str(self.partner_id.id)+""
             if self.product_list:
-                sql += " and product_id in "+temp_list
+                sql += " and w.product_id in "+temp_list
             if self.from_date:
                 if self.to_date:
-                    sql+=" and (requested_date  between '"+str(self.from_date)\
-                         +"' and '"+str(self.to_date)+"')"
+                    sql += " and (w.requested_date  between '"\
+                         + str(self.from_date)\
+                         + "' and '" + str(self.to_date)+"')"
                 else:
-                    sql += " and (requested_date between '" + str(self.from_date) \
+                    sql += " and (w.requested_date between '" \
+                           + str(self.from_date) \
                            + "' and '" + str(fields.Date.today())+"')"
 
             print(self.partner_id.read()[0])
@@ -45,32 +56,31 @@ class ReportWizard(models.TransientModel):
             # print(self.product_list.read()[0])
 
             data = {
-                'is_partner': {'is_partner':self.partner_id},
+                'is_partner': {'is_partner': self.partner_id},
                 'partner': self.partner_id.read()[0],
                 'field_info': self.read()[0],
-                'product_list':self.product_list.read(),
+                'product_list': self.product_list.read(),
                 'data': record
             }
 
             return self.env.ref('warranty.action_report_warranty_wizzard') \
                 .report_action(self, data=data)
-
-
         if self.product_list:
             print(self.read()[0])
-            sql += " where  product_id in "+temp_list
+            sql += " and  w.product_id in "+temp_list
             if self.from_date:
                 if self.to_date:
-                    sql+=" and (requested_date between  '"+str(self.from_date)\
-                         +"' and '"+str(self.to_date)+"')"
+                    sql += " and (w.requested_date between  '"\
+                         + str(self.from_date)\
+                         + "' and '"+str(self.to_date)+"')"
                 else:
-                    sql += " and (requested_date between '" + str(self.from_date) \
+                    sql += " and (w.requested_date between '" \
+                           + str(self.from_date) \
                            + "' and '" + str(fields.Date.today())+"')"
             print(sql)
             self.env.cr.execute(sql)
             record = self.env.cr.dictfetchall()
             print(record)
-            print( self.product_list.read())
             data = {
                 'is_partner': {'is_partner': self.partner_id},
                 'field_info': self.read()[0],
@@ -80,15 +90,14 @@ class ReportWizard(models.TransientModel):
 
             return self.env.ref('warranty.action_report_warranty_wizzard') \
                 .report_action(self, data=data)
-
-
         if self.from_date:
             if self.to_date:
-                sql+=" where  (requested_date between '"+str(self.from_date)\
-                         +"' and '"+str(self.to_date)+"')"
+                sql += " and  (w.requested_date between '"+str(self.from_date)\
+                         + "' and '" + str(self.to_date)+"')"
             else:
-                sql += " where (requested_date between '" + str(self.from_date) \
-                           + "' and '" + str(fields.Date.today())+"')"
+                sql += " and (w.requested_date between '" \
+                       + str(self.from_date) \
+                       + "' and '" + str(fields.Date.today())+"')"
 
             print(sql)
             self.env.cr.execute(sql)
@@ -103,14 +112,14 @@ class ReportWizard(models.TransientModel):
 
             return self.env.ref('warranty.action_report_warranty_wizzard') \
                 .report_action(self, data=data)
-
-
         if self.to_date:
             if self.from_date:
-                sql += " where  (requested_date between '" + str(self.from_date) \
+                sql += " and  (w.requested_date between '" \
+                       + str(self.from_date) \
                        + "' and '" + str(self.to_date) + "')"
             else:
-                sql += " where requested_date <= '" + str(fields.Date.today()) + "'"
+                sql += " and w.requested_date <= '" \
+                       + str(fields.Date.today()) + "'"
 
             print(sql)
             self.env.cr.execute(sql)
@@ -127,21 +136,31 @@ class ReportWizard(models.TransientModel):
 
     def action_print_xls(self):
         temp_list = str(self.product_list.mapped('id'))
-        temp_list='('+temp_list[1:-1]+")"
-        is_product_list=False
-        sql = 'select * from warranty_request'
+        temp_list = '('+temp_list[1:-1]+")"
+        is_product_list = False
+        sql = 'select w.sequence_number,p.display_name,pt.name as product,' \
+              ' w.state,am.name as Invoice ,' \
+              'pp.warranty_type,w.requested_date, ' \
+              'sl.name as Serial from ' \
+              'warranty_request as w,res_partner as p ' \
+              ', product_product as pp, product_template as pt , ' \
+              'account_move as am ' \
+              ',stock_production_lot as sl' \
+              ' where w.customer_id = p.id and pp.id = w.product_id ' \
+              ' and pp.product_tmpl_id = pt.id and am.id=w.invoice_id' \
+              ' and sl.id=w.serial_number_id'
         if self.partner_id:
-            sql += " where customer_id=" + str(self.partner_id.id) + ""
+            sql += " and w.customer_id=" + str(self.partner_id.id) + ""
             if self.product_list:
-                is_product_list=self.product_list.mapped("display_name")
-                sql += " and product_id in " + temp_list
+                is_product_list = self.product_list.mapped("display_name")
+                sql += " and w.product_id in " + temp_list
             if self.from_date:
                 if self.to_date:
-                    sql += " and (requested_date  between '" + str(
+                    sql += " and (w.requested_date  between '" + str(
                         self.from_date) \
                            + "' and '" + str(self.to_date) + "')"
                 else:
-                    sql += " and (requested_date between '" + str(
+                    sql += " and (w.requested_date between '" + str(
                         self.from_date) \
                            + "' and '" + str(fields.Date.today()) + "')"
 
@@ -153,7 +172,7 @@ class ReportWizard(models.TransientModel):
             'model': self._name,
             'warranty_data': record,
             'form': self.read()[0],
-            'product_list':is_product_list
+            'product_list': is_product_list
             }
             return {
             'type': 'ir.actions.report',
@@ -168,14 +187,14 @@ class ReportWizard(models.TransientModel):
         if self.product_list:
             is_product_list = self.product_list.mapped("display_name")
             print(self.read()[0])
-            sql += " where  product_id in " + temp_list
+            sql += " and  w.product_id in " + temp_list
             if self.from_date:
                 if self.to_date:
-                    sql += " and (requested_date between  '" + str(
+                    sql += " and (w.requested_date between  '" + str(
                         self.from_date) \
                            + "' and '" + str(self.to_date) + "')"
                 else:
-                    sql += " and (requested_date between '" + str(
+                    sql += " and (w.requested_date between '" + str(
                         self.from_date) \
                            + "' and '" + str(fields.Date.today()) + "')"
             print(sql)
@@ -201,10 +220,12 @@ class ReportWizard(models.TransientModel):
             }
         if self.from_date:
             if self.to_date:
-                sql += " where  (requested_date between '" + str(self.from_date) \
+                sql += " and  (w.requested_date between '" \
+                       + str(self.from_date) \
                        + "' and '" + str(self.to_date) + "')"
             else:
-                sql += " where (requested_date between '" + str(self.from_date) \
+                sql += " and (w.requested_date between '" \
+                       + str(self.from_date) \
                        + "' and '" + str(fields.Date.today()) + "')"
 
             print(sql)
@@ -230,10 +251,12 @@ class ReportWizard(models.TransientModel):
             }
         if self.to_date:
             if self.from_date:
-                sql += " where  (requested_date between '" + str(self.from_date) \
-                       + "' and '" + str(self.to_date) + "')"
+                sql += " and  (w.requested_date between '" \
+                       + str(self.from_date) + \
+                       "' and '" + str(self.to_date) + "')"
             else:
-                sql += " where requested_date <= '" + str(fields.Date.today()) + "'"
+                sql += " and w.requested_date <= '" + str(fields.Date.today()) \
+                       + "'"
 
             print(sql)
             self.env.cr.execute(sql)
@@ -256,77 +279,103 @@ class ReportWizard(models.TransientModel):
                 'report_type': 'xlsx'
             }
 
-
-
-
-
     def get_xlsx_report(self, data, response):
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         sheet = workbook.add_worksheet('Warranty XLS')
-        headiing = workbook.add_format({'font_size': 20, 'align': 'center', 'bold': True})
-        font_1 = workbook.add_format({'font_size': 10, 'align': 'center', 'bold': True})
+        headiing = workbook.add_format({'font_size': 20, 'align': 'center',
+                                        'bold': True})
+        font_1 = workbook.add_format({'font_size': 12, 'align': 'center',
+                                      'bold': True})
         font_2 = workbook.add_format({'font_size': 12, 'bold': True})
+        sheet.set_column(0, 9, 16)
+        headiing.set_bg_color('yellow')
 
-        sheet.merge_range('A1:N2', 'Product Warranty',headiing)
-        row=6
+        row = 6
         if data['form']['partner_id']:
-            sheet.merge_range('A' + str(row) + ':B' + str(row), "Customer",font_2)
-            sheet.merge_range('C'+str(row)+':D'+str(row) , data['form']['partner_id'][1])
+            sheet.merge_range('A1:G2', 'Product Warranty', headiing)
+            sheet.write('A' + str(row), "Customer", font_2)
+            sheet.write('B'+str(row), data['form']['partner_id'][1])
             row += 2
         if data['form']['from_date']:
-            sheet.merge_range('A' + str(row) + ':B' + str(row), "Start Date",font_2)
-            sheet.merge_range('C' + str(row) + ':D' + str(row), data['form']['from_date'])
-            row+=1
+            sheet.write('A' + str(row), "Start Date", font_2)
+            sheet.write('B' + str(row), data['form']['from_date'])
+            row += 2
+            if not data['form']['to_date']:
+                sheet.write('A' + str(row), "End Date", font_2)
+                sheet.write('B' + str(row),  str(fields.date.today()))
+            row += 2
         if data['form']['to_date']:
-            sheet.merge_range('A' + str(row) + ':B' + str(row), "End Date",font_2)
-            sheet.merge_range('C' + str(row) + ':D' + str(row), data['form']['to_date'])
-            row+=2
+            sheet.write('A' + str(row), "End Date", font_2)
+            sheet.write('B' + str(row), data['form']['to_date'])
+            row += 2
 
         if data['product_list']:
-            sheet.merge_range('A' + str(row) + ':B' + str(row), "Product",font_2)
+            sheet.write('A' + str(row), "Product", font_2)
             for rec in data['product_list']:
+                sheet.write('B' + str(row), rec)
+                row += 3
+        font_1.set_bg_color('#808080')
+        col = 0
+        sheet.write(row, col, 'Ref no', font_1)
+        col += 1
 
-                sheet.merge_range('C' + str(row) + ':D' + str(row),
-                                  rec)
-                row += 1
-        row+=3
+        sheet.write(row, col, 'Invoice Ref', font_1)
+        col += 1
+        if not data['form']['partner_id']:
+            sheet.write(row, col, 'Customer', font_1)
+            col += 1
+            sheet.merge_range('A1:H2', 'Product Warranty', headiing)
 
-        sheet.merge_range('A'+str(row)+':B'+str(row) , 'Ref no',font_1)
-        sheet.merge_range('C'+str(row)+':D'+str(row) , 'Invoice Ref',font_1)
-        sheet.merge_range('C'+str(row)+':D'+str(row) , 'Invoice Ref',font_1)
-        sheet.merge_range('E'+str(row)+':F'+str(row) ,'Product',font_1)
-        sheet.merge_range('G'+str(row)+':H'+str(row), 'Warranty Type',font_1)
-        sheet.merge_range('I'+str(row)+':J'+str(row), 'Serial Number',font_1)
-        sheet.merge_range('K'+str(row)+':L'+str(row), 'Requested Date',font_1)
-        sheet.merge_range('M'+str(row)+':N'+str(row), 'State',font_1)
+        sheet.write(row, col, 'Product', font_1)
+        col += 1
+        sheet.write(row, col, 'Warranty Type', font_1)
+        col += 1
+        sheet.write(row, col, 'Serial Number', font_1)
+        col += 1
+        sheet.write(row, col, 'Requested Date', font_1)
+        col += 1
+        sheet.write(row, col, 'State', font_1)
 
-        row+=1
+        row += 1
         for rec in data['warranty_data']:
-            sheet.merge_range('A' + str(row) + ':B' + str(row),
-                              rec['sequence_number'])
-            sheet.merge_range('C' + str(row) + ':D' + str(row),
-                              rec['report_invoice_ref'])
-            sheet.merge_range('E' + str(row) + ':F' + str(row),
-                              rec['report_product'])
+            col = 0
+            sheet.write(row, col, rec['sequence_number'])
+            col += 1
+            sheet.write(row, col, rec['invoice'])
+            col += 1
+            if not data['form']['partner_id']:
+                sheet.write(row, col, rec['display_name'])
+                col += 1
+            sheet.write(row, col, rec['product'])
+            col += 1
             if rec['warranty_type'] == 'service_warranty':
-                sheet.merge_range('G' + str(row) + ':H' + str(row),
-                                  'Service Warranty')
+                sheet.write(row, col, 'Service Warranty')
             if rec['warranty_type'] == 'replacement_warranty':
-                sheet.merge_range('G' + str(row) + ':H' + str(row),
-                                  'Replacement warranty')
-            sheet.merge_range('I' + str(row) + ':J' + str(row),
-                             rec['report_serial'])
-            sheet.merge_range('K' + str(row) + ':L' + str(row),
-                              rec['requested_date'])
-            sheet.merge_range('M' + str(row) + ':N' + str(row),
-                              rec['state'])
-            row+=1
-
-
-
-
-
+                sheet.write(row, col, 'Replacement warranty')
+            col += 1
+            sheet.write(row, col, rec['serial'])
+            col += 1
+            sheet.write(row, col, rec['requested_date'])
+            col += 1
+            if rec['state'] == 'draft':
+                sheet.write(row, col,
+                            'Draft')
+            if rec['state'] == 'to approve':
+                sheet.write(row, col,
+                            'To Approve')
+            if rec['state'] == 'approved':
+                sheet.write(row, col,
+                            'Approved')
+            if rec['state'] == 'received':
+                sheet.write(row, col, 'Received')
+            if rec['state'] == 'done':
+                sheet.write(row, col,
+                            'Done')
+            if rec['state'] == 'cancel':
+                sheet.write(row, col,
+                            'Cancel')
+            row += 1
         workbook.close()
         output.seek(0)
         response.stream.write(output.read())

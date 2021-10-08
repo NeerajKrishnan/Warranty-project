@@ -5,7 +5,7 @@ odoo.define('warranty.action_manager', function (require) {
  * The purpose of this file is to add the actions of type
  * 'xlsx' to the ActionManager.
  */
-alert("i am ready")
+
 var ActionManager = require('web.ActionManager');
 var framework = require('web.framework');
 var session = require('web.session');

@@ -11,7 +11,7 @@ class Warranty(models.Model):
     sequence_number = fields.Char(string='Order Reference',
                                   copy=False, readonly=True,
                                   default=lambda self: _('New'))
-    customer_id = fields.Many2one('res.partner', required=True )
+    customer_id = fields.Many2one('res.partner', required=True)
     invoice_id = fields.Many2one('account.move', required=True)
     invoice_date = fields.Date(related='invoice_id.invoice_date')
     product_from_invoice = fields.One2many(related='invoice_id.invoice_line_ids'
@@ -31,22 +31,22 @@ class Warranty(models.Model):
                               ('done', 'Done'),
                               ('cancel', 'Cancel')],
                              default='first')
-    warranty_type =fields.Selection(related='product_id.warranty_type',
-                                    store=True)
+    warranty_type = fields.Selection(related='product_id.warranty_type',
+                                     store=True)
     trans_warranty_location = fields.Char(string='Warranty location',
                                           store=True)
     return_warranty_location = fields.Char(string="customer location",
                                            store=True)
-    report_invoice_ref=fields.Char(related='invoice_id.name', store=True)
-    report_product =fields.Char()
-    report_serial = fields.Char(related='serial_number_id.name',store=True)
-    report_customer =fields.Char(related='customer_id.name',store= True)
+    report_invoice_ref = fields.Char(related='invoice_id.name', store=True)
+    report_product = fields.Char()
+    report_serial = fields.Char(related='serial_number_id.name', store=True)
+    report_customer = fields.Char(related='customer_id.name', store=True)
 
     @api.onchange('product_id')
     def _compute_expiration_date(self):
         if self.invoice_date:
             for test in self:
-                test.report_product=test.product_id.read()[0]['partner_ref']
+                test.report_product = test.product_id.read()[0]['partner_ref']
                 test.warranty_expire_date = fields.Datetime.from_string(
                     test.invoice_date) + timedelta(
                     days=test.warranty_period_form)
@@ -67,11 +67,12 @@ class Warranty(models.Model):
     def filter_according_product_id(self):
         return {
             'domain': {
-                'product_id': [('id', '=', self.product_from_invoice.
-                                mapped("product_id.id")
-                                )
-                               , ('has_warranty', '=', True)
+                'product_id': [('id', '=',
+                                self.product_from_invoice.
+                                mapped("product_id.id")),
+                               ('has_warranty', '=', True)
                                ]
+
 
             }
         }
@@ -110,8 +111,8 @@ class Warranty(models.Model):
 
     def action_approve(self):
         self.state = 'received'
-        test = self.env['stock.quant'].search([('product_id.id', '='
-                                                , self.product_id.id),
+        test = self.env['stock.quant'].search([('product_id.id', '=',
+                                                self.product_id.id),
                                                ('lot_id.name', '=',
                                                 self.serial_number_id.name),
                                                ('quantity', '>', 0),
@@ -126,7 +127,7 @@ class Warranty(models.Model):
                     'name': 'REC' + self.sequence_number,
                     'product_id': test.product_id.id,
                     'product_uom':  test.product_id.uom_id.id,
-                     'lot_ids': [{ test.lot_id.id}],
+                    'lot_ids': [{test.lot_id.id}],
                     'product_uom_qty': 1
                 })]
             })
@@ -143,7 +144,7 @@ class Warranty(models.Model):
                     'name': 'REC' + self.sequence_number,
                     'product_id': test.product_id.id,
                     'product_uom':  test.product_id.uom_id.id,
-                    'lot_ids': [{ test.lot_id.id}],
+                    'lot_ids': [{test.lot_id.id}],
                     'product_uom_qty': 1
                 })]
             })
@@ -151,21 +152,17 @@ class Warranty(models.Model):
             trans.action_confirm()
             trans.button_validate()
 
-
     def action_return_product(self):
         self.state = 'done'
         if self.product_id.warranty_type == 'replacement_warranty':
             print("self")
-            test = self.env['stock.quant'].search([('product_id.id', '='
-                                                , self.product_id.id)
-                                                  ,
-                                               ('lot_id.name', '=',
-                                                self.serial_number_id.name)
-                                                  ,
-                                               ('quantity', '>', 0)
-                                                  ,
-                                               ('location_id.id', '=', 39)
-                                               ])
+            test = self.env['stock.quant'].search([('product_id.id', '=',
+                                                    self.product_id.id),
+                                                   ('lot_id.name', '=',
+                                                    self.serial_number_id.name),
+                                                   ('quantity', '>', 0),
+                                                   ('location_id.id', '=', 39)
+                                                   ])
             product_id_id = test.product_id
             serial_id_id = test.lot_id
             trans = self.env['stock.picking'].create({
@@ -180,23 +177,18 @@ class Warranty(models.Model):
                 'product_uom_qty': 1
             })]
             })
-            self.return_warranty_location=trans.name
+            self.return_warranty_location = trans.name
             trans.action_confirm()
             trans.button_validate()
         if self.product_id.warranty_type == 'service_warranty':
-            test = self.env['stock.quant'].search([('product_id.id', '='
-                                                , self.product_id.id)
-                                                  ,
-                                               ('lot_id.name', '=',
-                                                self.serial_number_id.name)
-                                                  ,
-                                               ('quantity', '>', 0)
-                                                  ,
-                                               ('location_id.id', '=', 38)
-                                               ])
+            test = self.env['stock.quant'].search([('product_id.id', '=',
+                                                    self.product_id.id),
+                                                   ('lot_id.name', '=',
+                                                    self.serial_number_id.name),
+                                                   ('quantity', '>', 0),
+                                                   ('location_id.id', '=', 38)])
             product_id_id = test.product_id
             serial_id_id = test.lot_id
-
             trans = self.env['stock.picking'].create({
                 'picking_type_id': 5,
                 'location_id': 38,
@@ -209,8 +201,7 @@ class Warranty(models.Model):
                 'product_uom_qty': 1
             })]
             })
-
-            self.return_warranty_location=trans.name
+            self.return_warranty_location = trans.name
             trans.action_confirm()
             trans.button_validate()
 
@@ -220,8 +211,9 @@ class Warranty(models.Model):
             'type': 'ir.actions.act_window',
             'view_mode': 'tree',
             'res_model': 'stock.picking',
-            'domain': [('name','in',[self.trans_warranty_location,
-                                     self.return_warranty_location])]
+            'domain': [('name', 'in', [self.trans_warranty_location,
+                                       self.return_warranty_location])]
         }
+
     def action_cancel(self):
         self.state = 'cancel'

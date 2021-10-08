@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 
 
 class Product(models.Model):
@@ -6,12 +6,6 @@ class Product(models.Model):
     has_warranty = fields.Boolean("Has Warranty")
     warranty_period = fields.Integer(string="Warranty Period(Days)", size=10)
     warranty_type = fields.Selection([('service_warranty', 'Service Warranty'),
-                                     ('replacement_warranty',
-                                      'Replacement warranty')]
-                                     , default='service_warranty')
-
-
-
-
-
-
+                                      ('replacement_warranty',
+                                       'Replacement warranty')],
+                                       default='service_warranty')

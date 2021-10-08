@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-name="Product_Rating_rec" t-inherit="point_of_sale.OrderReceipt"
+   t-inherit-mode="extension" owl="1">
+<xpath expr="//t[@t-esc='line.product_name_wrapped[0]']"
+       position="after">
+
+<p></p>
+    <span class="price-tag" style="margin-right: 70%">
+<t t-foreach="[1,2,3,4,5]" t-as="rating">
+
+
+<t t-if="rating lte line.product_rating">
+<span class="fa fa-star checked" style="color: yellow"></span>
+
+</t>
+    <t t-else="rating lt props.product.product_rating">
+<span class="fa fa-star checked"></span>
+
+</t>
+</t>
+</span>
+
+
+
+
+</xpath>
+    <xpath expr="//div[@t-esc='line.product_name_wrapped[0]']"
+           position="after">
+  <p></p>
+
+        <span class="price-tag" style="margin-right: 70%">
+<t t-foreach="[1,2,3,4,5]" t-as="rating">
+
+
+<t t-if="rating lte line.product_rating">
+<span class="fa fa-star checked" style="color: yellow"></span>
+
+</t>
+    <t t-else="rating lt props.product.product_rating">
+<span class="fa fa-star checked"></span>
+
+</t>
+</t>
+</span>
+
+
+
+
+</xpath>
+</t>
+</templates>

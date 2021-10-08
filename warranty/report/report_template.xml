@@ -68,13 +68,15 @@
 </group>
     <br></br>
  <table class="table table-condensed" bgcolor="#875A7B">
-     <t t-if="field_info['partner_id']">
     <tr>
         <th>Ref No</th>
         <th>Inovice Ref</th>
         <th>Product</th>
         <th>Warranty Type</th>
         <th>Serial Number</th>
+        <t t-if="not (field_info['partner_id'])">
+            <th> Customer </th>
+        </t>
         <th>Requested Date</th>
         <th>State</th>
     </tr>
@@ -82,8 +84,8 @@
     <t t-foreach="data" t-as="rec">
         <tr>
             <td><t t-esc="rec['sequence_number']"></t> </td>
-            <td><t t-esc="rec['report_invoice_ref']"></t> </td>
-            <td><t t-esc="rec['report_product']"></t> </td>
+            <td><t t-esc="rec['invoice']"></t> </td>
+            <td><t t-esc="rec['product']"></t> </td>
             <td>
                 <t t-if="rec['warranty_type'] =='service_warranty'">
                     Service Warranty
@@ -93,48 +95,18 @@
                 </t>
             </td>
 
-            <td><t t-esc="rec['report_serial']"></t> </td>
+            <td><t t-esc="rec['serial']"></t> </td>
+            <t t-if="not (field_info['partner_id'])">
+                 <td><t t-esc="rec['display_name']"></t> </td>
+
+        </t>
             <td><t t-esc="rec['requested_date']"></t></td>
             <td><t t-esc="rec['state']"></t></td>
         </tr>
     </t>
-     </t>
 
 
 
-<t t-if="not field_info['partner_id']">
-    <tr>
-        <th>Ref No</th>
-        <th>Inovice Ref</th>
-        <th>Customer</th>
-        <th>Product</th>
-        <th>Warranty Type</th>
-        <th>Serial Number</th>
-        <th>Requested Date</th>
-        <th>State</th>
-    </tr>
-
-    <t t-foreach="data" t-as="rec">
-        <tr>
-            <td><t t-esc="rec['sequence_number']"></t> </td>
-            <td><t t-esc="rec['report_invoice_ref']"></t> </td>
-            <td><t t-esc="rec['report_customer']"></t> </td>
-            <td><t t-esc="rec['report_product']"></t> </td>
-            <td>
-                <t t-if="rec['warranty_type'] =='service_warranty'">
-                    Service Warranty
-                </t>
-                <t t-if="rec['warranty_type'] =='replacement_warranty'">
-                    Replacement warranty
-                </t>
-            </td>
-
-            <td><t t-esc="rec['report_serial']"></t> </td>
-            <td><t t-esc="rec['requested_date']"></t></td>
-            <td><t t-esc="rec['state']"></t></td>
-        </tr>
-    </t>
-     </t>
 
 
 

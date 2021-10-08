@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inherited_product_rating_form" model="ir.ui.view">
+        <field name="name">product.product.inherited.so</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+
+             <field name="categ_id" position="after">
+                 <br></br>
+
+            <field name="product_rating"  widget="priority" />
+            <br></br>
+        </field>
+
+        </field>
+    </record>
+
+
+
+
+
+</odoo>

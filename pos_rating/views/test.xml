@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ProductRating" t-inherit="point_of_sale.ProductItem"
+       t-inherit-mode="extension">
+
+
+        <xpath expr="//span[hasclass('price-tag')]" position="after">
+
+<span class="price-tag" style="margin-right: 70% ;font-size: 45%">
+<t t-foreach="[1,2,3,4,5]" t-as="rating">
+
+
+<t t-if="rating lte props.product.product_rating">
+<span class="fa fa-star checked" style="color: yellow"></span>
+
+</t>
+    <t t-else="rating lt props.product.product_rating">
+<span class="fa fa-star checked" ></span>
+
+</t>
+</t>
+</span>
+
+
+
+
+
+
+        </xpath>
+    </t>
+
+
+
+
+</templates>
