@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="DiscountLimitPopup" owl="1">
+        <div role="dialog" class="modal-dialog">
+            <Draggable>
+                <div class="popup " t-att-class="{ 'popup-password': props.isPassword }">
+                    <header class="title drag-handle">
+                        <t t-esc="props.title" />
+                    </header>
+
+
+                    <footer class="footer centered">
+                        <div class="button confirm" t-on-mousedown.prevent="confirm">
+                            Ok
+                        </div>
+                    </footer>
+                </div>
+            </Draggable>
+
+        </div>
+    </t>
+
+</templates>
